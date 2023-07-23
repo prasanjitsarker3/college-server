@@ -26,6 +26,8 @@ async function run() {
         await client.connect();
 
         const collegeCollection = client.db("collegeDataBasePortal").collection("colleges");
+        const admissionCollection = client.db("collegeDataBasePortal").collection("admission");
+        const feedbackCollection = client.db("collegeDataBasePortal").collection("feedback");
 
 
         app.get("/colleges", async (req, res) => {
@@ -33,10 +35,38 @@ async function run() {
             const result = await collegeCollection.find(query).toArray();
             res.send(result);
         })
+        app.get("/college", async (req, res) => {
+            const search = req.query.search;
+            const query = { title: { $regex: search, $options: 'i' } };
+            const result = await collegeCollection.find(query).toArray();
+            res.send(result);
+        })
         app.get("/college/:id", async (req, res) => {
             const id = req.params.id;
-            const query={_id: new ObjectId(id)}
+
+            const query = { _id: new ObjectId(id) }
             const result = await collegeCollection.findOne(query)
+            res.send(result)
+        })
+
+        app.post("/admission", async (req, res) => {
+            const admission = req.body;
+            const result = await admissionCollection.insertOne(admission);
+            res.send(result)
+        })
+        app.get("/admission", async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const result = await admissionCollection.find(query).toArray();
+            res.send(result);
+        })
+        app.post("/feedback", async (req, res) => {
+            const feedback = req.body;
+            const result = await feedbackCollection.insertOne(feedback);
+            res.send(result)
+        })
+        app.get("/feedback", async (req, res) => {
+            const result = await feedbackCollection.find().toArray();
             res.send(result)
         })
         // Send a ping to confirm a successful connection
