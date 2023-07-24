@@ -6,6 +6,8 @@ require('dotenv').config()
 app.use(cors())
 app.use(express.json())
 //college-server vm64zj9wIAx2HtdK
+// DB_USER=college-server
+// DB_PASS=vm64zj9wIAx2HtdK
 
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
