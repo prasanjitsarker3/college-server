@@ -28,6 +28,7 @@ async function run() {
         const collegeCollection = client.db("collegeDataBasePortal").collection("colleges");
         const admissionCollection = client.db("collegeDataBasePortal").collection("admission");
         const feedbackCollection = client.db("collegeDataBasePortal").collection("feedback");
+        const usersCollection = client.db("collegeDataBasePortal").collection("users");
 
 
         app.get("/colleges", async (req, res) => {
@@ -68,6 +69,38 @@ async function run() {
         app.get("/feedback", async (req, res) => {
             const result = await feedbackCollection.find().toArray();
             res.send(result)
+        })
+
+        app.post("/users", async (req, res) => {
+            const users = req.body;
+            const query = { email: users.email }
+            const existing = await usersCollection.findOne(query)
+            if (existing) {
+                return res.send({ message: "User Already Exist" })
+            }
+            const result = await usersCollection.insertOne(users)
+            res.send(result)
+        })
+        app.get("/users", async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email }
+            const result = await usersCollection.findOne(query)
+            res.send(result);
+
+        })
+        app.patch("/updateData/:id", async (req, res) => {
+            const id = req.params.id;
+            const updateData = req.body;
+            const filter = { _id: new ObjectId(id) }
+            const options = { upsert: true }
+            const updateUser = {
+                $set: {
+                    college: updateData.college,
+                    address: updateData.address
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updateUser, options)
+            res.send(result);
         })
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
