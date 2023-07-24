@@ -24,7 +24,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        // Connect the client to the server	(optional starting in v4.7)f
+        
         await client.connect();
 
         const collegeCollection = client.db("collegeDataBasePortal").collection("colleges");
@@ -83,6 +83,7 @@ async function run() {
             const result = await usersCollection.insertOne(users)
             res.send(result)
         })
+        //use info
         app.get("/users", async (req, res) => {
             const email = req.query.email;
             const query = { email: email }
